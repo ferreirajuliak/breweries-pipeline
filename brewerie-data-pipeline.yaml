@@ -1,0 +1,45 @@
+resources:
+  jobs:
+    brewerie_data_pipeline:
+      name: brewerie-data-pipeline
+      email_notifications:
+        on_success:
+          - juliakarineferreira@gmail.com
+        on_failure:
+          - juliakarineferreira@gmail.com
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 1
+          unit: DAYS
+      tasks:
+        - task_key: ingestion_to_bronze_layer
+          notebook_task:
+            notebook_path: /Workspace/Users/juliakarineferreira@gmail.com/bronze_ingest
+            source: WORKSPACE
+          email_notifications:
+            on_failure:
+              - juliakarineferreira@gmail.com
+        - task_key: transform_to_silver
+          depends_on:
+            - task_key: ingestion_to_bronze_layer
+          notebook_task:
+            notebook_path: /Workspace/Users/juliakarineferreira@gmail.com/silver_transform
+            source: WORKSPACE
+          email_notifications:
+            on_failure:
+              - juliakarineferreira@gmail.com
+        - task_key: gold_aggregation
+          depends_on:
+            - task_key: transform_to_silver
+          notebook_task:
+            notebook_path: /Workspace/Users/juliakarineferreira@gmail.com/gold_aggregate
+            source: WORKSPACE
+          email_notifications:
+            on_success:
+              - juliakarineferreira@gmail.com
+            on_failure:
+              - juliakarineferreira@gmail.com
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
