@@ -1,0 +1,45 @@
+resources:
+  jobs:
+    brewerie_data_pipeline_job:
+      name: brewerie-data-pipeline-job
+      email_notifications:
+        on_success:
+          - <your-email>
+        on_failure:
+          - <your-email>
+      trigger:
+        pause_status: UNPAUSED
+        periodic:
+          interval: 1
+          unit: DAYS
+      tasks:
+        - task_key: ingestion_to_bronze_layer
+          notebook_task:
+            notebook_path: /Workspace/Users/<your-email>/breweries-pipeline/bronze_ingest
+            source: WORKSPACE
+          email_notifications:
+            on_failure:
+              - <your-email>
+        - task_key: transform_to_silver
+          depends_on:
+            - task_key: ingestion_to_bronze_layer
+          notebook_task:
+            notebook_path: /Workspace/Users/<your-email>/breweries-pipeline/silver_transform
+            source: WORKSPACE
+          email_notifications:
+            on_failure:
+              - <your-email>
+        - task_key: gold_aggregation
+          depends_on:
+            - task_key: transform_to_silver
+          notebook_task:
+            notebook_path: /Workspace/Users/<your-email>/breweries-pipeline/gold_aggregate
+            source: WORKSPACE
+          email_notifications:
+            on_success:
+              - <your-email>
+            on_failure:
+              - <your-email>
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
