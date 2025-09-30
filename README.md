@@ -19,7 +19,7 @@ The pipeline is orchestrated via a **Databricks Job** that runs daily, ensuring 
 
 ## Running the Pipeline in Databricks
 
-## 0. Create a Databricks Free Edition Account  
+0. **Create a Databricks Free Edition Account**  
 - If you don’t already have one, sign up for a free Databricks Free Edition account:  
    https://www.databricks.com/learn/free-edition
 - Follow the sign-up instructions and log in to access your workspace.  
